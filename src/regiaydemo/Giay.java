@@ -8,7 +8,7 @@ public class Giay {
     private String mauSac;
     private float size;
     private float giaBan;
-    private int soLuongTonKho; // thêm thuộc tính tồn kho
+    private int soLuongTonKho; // số lượng tồn kho
 
     // Constructor đầy đủ
     public Giay(String maGiay, String tenGiay, String hangSX, String loaiGiay,
@@ -48,7 +48,6 @@ public class Giay {
     public int getSoLuongTonKho() { return soLuongTonKho; }
     public void setSoLuongTonKho(int soLuongTonKho) { this.soLuongTonKho = soLuongTonKho; }
 
-    // Override toString để dễ debug
     @Override
     public String toString() {
         return "Giay{" +

@@ -4,7 +4,7 @@ package regiaydemo;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.*;
 public class jfqlgiay extends javax.swing.JFrame {
 
     public jfqlgiay() {
@@ -15,7 +15,30 @@ public class jfqlgiay extends javax.swing.JFrame {
         this.dispose();
         new jfmanhinhchinh().setVisible(true);
     });
+        jButton1.addActionListener(e -> themGiay());
+
+        // Xoá giày
+        jButton2.addActionListener(e -> xoaGiay());
+
+        // Sửa giày
+        jButton3.addActionListener(e -> suaGiay());
+
+        // Tìm kiếm giày
+        jButton4.addActionListener(e -> timKiemGiay());
         
+        // Khi click vào bảng thì load dữ liệu lên textfield
+        jTable1.getSelectionModel().addListSelectionListener(event -> {
+            if (!event.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
+                int row = jTable1.getSelectedRow();
+                jTextField1.setText(jTable1.getValueAt(row, 0).toString());
+                jTextField2.setText(jTable1.getValueAt(row, 1).toString());
+                jTextField3.setText(jTable1.getValueAt(row, 2).toString());
+                jTextField4.setText(jTable1.getValueAt(row, 3).toString());
+                jTextField5.setText(jTable1.getValueAt(row, 4).toString());
+                jTextField6.setText(jTable1.getValueAt(row, 5).toString());
+                jTextField7.setText(jTable1.getValueAt(row, 6).toString());
+            }
+        });
     }
 
 
@@ -40,7 +63,80 @@ public class jfqlgiay extends javax.swing.JFrame {
             model.addRow(row);
         }
     }
+    private void themGiay() {
+        try {
+            Giay g = new Giay(
+                jTextField1.getText(),
+                jTextField2.getText(),
+                jTextField7.getText(),
+                "Sneaker", // hoặc thêm ô nhập loại giày riêng
+                jTextField4.getText(),
+                Float.parseFloat(jTextField3.getText()),
+                Float.parseFloat(jTextField6.getText()),
+                Integer.parseInt(jTextField5.getText())
+            );
+            if (GiayDao.insert(g)) {
+                JOptionPane.showMessageDialog(this, "Thêm thành công!");
+                loadTable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi nhập dữ liệu!");
+        }
+    }
+    private void suaGiay() {
+        try {
+            Giay g = new Giay(
+                jTextField1.getText(),
+                jTextField2.getText(),
+                jTextField7.getText(),
+                "Sneaker",
+                jTextField4.getText(),
+                Float.parseFloat(jTextField3.getText()),
+                Float.parseFloat(jTextField6.getText()),
+                Integer.parseInt(jTextField5.getText())
+            );
+            if (GiayDao.update(g)) {
+                JOptionPane.showMessageDialog(this, "Sửa thành công!");
+                loadTable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Sửa thất bại!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi nhập dữ liệu!");
+        }
+    }
+    private void xoaGiay() {
+        String maGiay = jTextField1.getText();
+        if (GiayDao.delete(maGiay)) {
+            JOptionPane.showMessageDialog(this, "Xoá thành công!");
+            loadTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Không thể xoá vì giày đang được tham chiếu trong hóa đơn/thống kê!");
+        }
+    }
 
+    // Tìm kiếm giày
+    private void timKiemGiay() {
+        String keyword = jTextField2.getText();
+        ArrayList<Giay> list = GiayDao.search(keyword);
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+        for (Giay g : list) {
+            Object[] row = {
+                g.getMaGiay(),
+                g.getTenGiay(),
+                g.getSize(),
+                g.getMauSac(),
+                g.getSoLuongTonKho(),
+                g.getGiaBan(),
+                g.getHangSX(),
+                g.getLoaiGiay()
+            };
+            model.addRow(row);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
